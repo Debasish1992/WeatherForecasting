@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">WeatherForecast</string>
+    <string name="api_key">2c5465b5b48db0dce2f48958dc343b56</string>
+    <string name="group_api_key_txt">appid=</string>
+    <string name="api_end_point_several_cities">http://api.openweathermap.org/data/2.5/group?id=</string>
 </resources>
