@@ -42,4 +42,9 @@ public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks
         }
 
     }
+
+    @Override
+    public void letUserRedirectToHome(boolean status) {
+
+    }
 }
