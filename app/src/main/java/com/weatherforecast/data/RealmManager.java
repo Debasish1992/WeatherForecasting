@@ -1,9 +1,12 @@
 package com.weatherforecast.data;
 
+import android.util.Log;
+
 import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.CitiAccessCallbacks;
 import com.weatherforecast.interfaces.WeatherCallbacks;
+import com.weatherforecast.utils.ShowLogs;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -137,6 +140,27 @@ public class RealmManager {
             ex.printStackTrace();
             weatherCallbacks.onSuccessfulWeatherDataSaveInRealm(false);
         }
+    }
+
+
+    /**
+     * Function responsible for getting the weather model data from the city Id
+     * @param realm realm instance
+     * @param cityId city id
+     * @return Weather Model of the city
+     */
+    public WeatherModel getCityWeatherDetails(Realm realm, String cityId){
+        WeatherModel weatherModel = null;
+        try{
+             weatherModel = realm.where(WeatherModel.class)
+                    .equalTo("cityId", cityId)
+                    .findFirst();
+            ShowLogs.displayLog("weather view model is" + weatherModel+ "");
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return weatherModel;
+
     }
 }
 

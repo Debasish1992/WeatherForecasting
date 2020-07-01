@@ -3,6 +3,7 @@ package com.weatherforecast.ui;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -45,6 +46,9 @@ public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks
 
     @Override
     public void letUserRedirectToHome(boolean status) {
-
+        if(status){
+            SplashScreen.this.finish();
+            startActivity(new Intent(SplashScreen.this, HomeScreen.class));
+        }
     }
 }

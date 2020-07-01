@@ -11,6 +11,15 @@ public class CityModel extends RealmObject {
     String country;
     double lat;
     double lng;
+    WeatherModel weatherModel;
+
+    public WeatherModel getWeatherModel() {
+        return weatherModel;
+    }
+
+    public void setWeatherModel(WeatherModel weatherModel) {
+        this.weatherModel = weatherModel;
+    }
 
     public CityModel() {
     }

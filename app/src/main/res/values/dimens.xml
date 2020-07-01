@@ -1,0 +1,79 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="size_1_dp">1dp</dimen>
+    <dimen name="size_20_dp">20dp</dimen>
+
+    <dimen name="weight_3">3</dimen>
+    <dimen name="weight_1">1</dimen>
+
+    <dimen name="margin_5_dp">5dp</dimen>
+    <dimen name="margin_10_dp">10dp</dimen>
+    <dimen name="margin_15">15dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+    <dimen name="margin_30">30dp</dimen>
+    <dimen name="margin_35">35dp</dimen>
+    <dimen name="margin_40">40dp</dimen>
+    <dimen name="margin_45">45dp</dimen>
+    <dimen name="margin_50">50dp</dimen>
+
+
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
+    <dimen name="padding_5">5dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
+    <dimen name="height_50">50dp</dimen>
+    <dimen name="height_100">100dp</dimen>
+    <dimen name="height_120">120dp</dimen>
+    <dimen name="height_140">140dp</dimen>
+    <dimen name="height_240">240dp</dimen>
+    <dimen name="bottom_navigation_icon_size"
+        tools:override="true">40dp</dimen>
+
+    <dimen name="text_size_12_sp">12sp</dimen>
+    <dimen name="text_size_14_sp">14sp</dimen>
+    <dimen name="text_size_15_sp">15sp</dimen>
+    <dimen name="text_size_16_sp">16sp</dimen>
+    <dimen name="text_size_17_sp">17sp</dimen>
+    <dimen name="text_size_18_sp">18sp</dimen>
+    <dimen name="text_size_20_sp">20sp</dimen>
+    <dimen name="text_size_22_sp">22sp</dimen>
+    <dimen name="text_size_24_sp">24sp</dimen>
+    <dimen name="text_size_25_sp">25sp</dimen>
+    <dimen name="text_size_28_sp">28sp</dimen>
+    <dimen name="text_size_30_sp">30sp</dimen>
+    <dimen name="text_size_32_sp">32sp</dimen>
+    <dimen name="text_size_34_sp">34sp</dimen>
+
+    <dimen name="chip_text_size">16dp</dimen>
+    <dimen name="chip_size">30dp</dimen>
+    <dimen name="size_50_dp">50dp</dimen>
+    <dimen name="spacing_xxs">8dp</dimen>
+    <dimen name="spacing_xs">12dp</dimen>
+    <dimen name="spacing_s">16dp</dimen>
+
+    <dimen name="image_width_40">40dp</dimen>
+    <dimen name="image_height_40">40dp</dimen>
+
+    <dimen name="elevation_5">5dp</dimen>
+    <dimen name="elevation_10">10dp</dimen>
+    <dimen name="radius_5">5dp</dimen>
+    <dimen name="radius_10">10dp</dimen>
+    <!--
+    Because the window insets on round devices are larger than 15dp, this padding only applies
+    to square screens.
+    -->
+    <dimen name="box_inset_layout_padding">0dp</dimen>
+
+    <!--
+    This padding applies to both square and round screens. The total padding between the buttons
+    and the window insets is box_inset_layout_padding (above variable) on square screens and
+    inner_frame_layout_padding (below variable) on round screens.
+    -->
+    <dimen name="inner_frame_layout_padding">5dp</dimen>
+</resources>

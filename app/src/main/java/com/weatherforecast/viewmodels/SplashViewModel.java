@@ -13,6 +13,7 @@ import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.interfaces.CitiAccessCallbacks;
 import com.weatherforecast.interfaces.SplashUiCallbacks;
 import com.weatherforecast.interfaces.WeatherCallbacks;
+import com.weatherforecast.ui.SplashScreen;
 import com.weatherforecast.utils.NetworkConnectionChecker;
 import com.weatherforecast.utils.ParseJSON;
 import com.weatherforecast.utils.ShowLogs;
