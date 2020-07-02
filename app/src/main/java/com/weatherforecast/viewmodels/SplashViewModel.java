@@ -111,6 +111,7 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
 
     // Function responsible for fetching Data from Weather API
     void callWeatherAPi(String ids) {
+        ShowLogs.displayLog("Calling API");
         getDataFromApi(ids);
     }
 
@@ -131,7 +132,7 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
         if (respondData != null) {
             ShowLogs.displayLog(respondData);
             // Saving the API response into DataBase
-            realmManager.saveWeatherData(realm, respondData, null,this);
+            realmManager.saveAllCityWeatherData(realm, respondData, null,this);
         }
     }
 
@@ -165,7 +166,7 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
     }
 
     @Override
-    public void onSuccessFUlDataFetchedForACity(String response) {
+    public void onSuccessFUlDataFetchedForACity(String response, String cityId) {
 
     }
 }

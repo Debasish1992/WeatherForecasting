@@ -12,6 +12,7 @@ import com.weatherforecast.data.RealmManager;
 import com.weatherforecast.data.network.NetworkCalls;
 import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.entity.WeatherModel;
+import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.WeatherCallbacks;
 import com.weatherforecast.interfaces.WeatherUiCallbacks;
 import com.weatherforecast.utils.NetworkConnectionChecker;
@@ -28,6 +29,7 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
     WeatherUiCallbacks callbacks;
     RealmManager realmManager;
     String cityIdDb;
+    ConnectionChecker connectionChecker;
 
     public WeatherViewModel() {
         mText = new MutableLiveData<>();
@@ -38,10 +40,11 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
         return mText;
     }
 
-    public void initObjects(Context contxt, Realm realm, WeatherUiCallbacks callbacks) {
+    public void initObjects(Context contxt, Realm realm, WeatherUiCallbacks callbacks, ConnectionChecker connectionChecker) {
         this.getRealm = realm;
         this.context = contxt;
         this.callbacks = callbacks;
+        this.connectionChecker = connectionChecker;
         realmManager = RealmManager.getInstance();
     }
 
@@ -52,27 +55,43 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
             int longitude = (int) lng;
             if (NetworkConnectionChecker.isConnected(context)) {
                 NetworkCalls networkCalls = new NetworkCalls(context);
-                networkCalls.fetchDataForACity(latitide, longitude, this);
+                networkCalls.fetchDataForACity(latitide, longitude,null,this);
+            }else{
+                connectionChecker.isConnected(false);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
 
+    public void getWeatherDataForFiveDays(String cityId){
+        try{
+            if (NetworkConnectionChecker.isConnected(context)) {
+                NetworkCalls networkCalls = new NetworkCalls(context);
+                networkCalls.fetchDataForACityThroughId(cityId,this);
+            }else{
+                connectionChecker.isConnected(false);
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public void  getDataWeatherDataFromLocal(String cityId){
-        RealmResults<WeatherModel> getWeatherData = realmManager.getCityWeatherDetails(getRealm, cityIdDb);
-        callbacks.getCityForecastData(getWeatherData);
+        RealmResults<WeatherModel> getWeatherData = realmManager.getCityWeatherDetails(getRealm, cityId);
+        callbacks.getCityForecastData(getWeatherData, cityId);
+    }
+
+    public void getWeatherDetailsCount(String cityId){
+        int count = realmManager.getWeatherDetailsCount(getRealm, cityId);
+        callbacks.getWeatherDetailsCount(count, cityId);
     }
 
     @Override
     public void onSuccessfulWeatherDataSaveInRealm(boolean status, String cityIdDb) {
         if (status) {
-            ShowLogs.displayLog("The Saved City Id is" + cityIdDb);
             RealmResults<WeatherModel> getWeatherData = realmManager.getCityWeatherDetails(getRealm, cityIdDb);
-            callbacks.getCityForecastData(getWeatherData);
-            ShowLogs.displayLog("Data fetched from Realm for a city " + getWeatherData.toString());
-            Toast.makeText(context, "Data Successfully Stored in Realm", Toast.LENGTH_SHORT).show();
+            callbacks.getCityForecastData(getWeatherData, cityIdDb);
         } else {
             Toast.makeText(context, "Data did not Stored in Realm", Toast.LENGTH_SHORT).show();
         }
@@ -85,15 +104,15 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
     }
 
     @Override
-
-    public void onSuccessFUlDataFetchedForACity(String response) {
-        ShowLogs.displayLog("City Data Fetched from API" + response);
-        realmManager.saveWeatherData(getRealm, response, cityIdDb,this);
+    public void onSuccessFUlDataFetchedForACity(String response, String cityId) {
+        ShowLogs.displayLog("City Data Fetched from API" + cityId);
+        realmManager.saveWeatherData(getRealm, response, cityId,this);
     }
 
     public void onTextChanged(CharSequence phrase, int start, int before, int count) {
         ShowLogs.displayLog(phrase.toString());
         if (phrase.toString().length() > 0) {
+            callbacks.onDataSearched(true);
             RealmResults<CityModel> searchedResults = realmManager.getSearchedCityModel(getRealm, phrase.toString());
             callbacks.getCitySearchedResults(searchedResults);
         } else {

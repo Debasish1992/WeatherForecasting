@@ -1,7 +1,6 @@
 package com.weatherforecast.adapters;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,15 +40,9 @@ public class CityListAdapter extends RecyclerView.Adapter<CityListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull CityListAdapter.ViewHolder holder, int position) {
         CityModel cityModel = cityModelList.get(position);
-        //if(!TextUtils.isEmpty(cityModel.getState())){
-            holder.tvCityName.setText(cityModel.getName());
-         //   holder.tvCityTemp.setText(weatherModels.get(position).getTemp() + "");
-        //}
-
-
-
-        //holder.tvCityTemp.setText("Temprature " + cityModel.getWeatherModel().get(0).getTemp());
-        //holder.tvCityWeather.setText("Max Temprature " + cityModel.getWeatherModel().get(0).getMaxTemp() + "| Min Temprature " + cityModel.getWeatherModel().get(0).getMinTemp() + "| Humidity " + cityModel.getWeatherModel().get(0).getHumidity());
+        holder.tvCityName.setText(cityModel.getName() + ", " + cityModel.getCountry());
+        holder.tvCityTemp.setText("Temprature " + weatherModels.get(position).getTemp() + "");
+        holder.tvCityWeather.setText("Max Temprature " + weatherModels.get(position).getMaxTemp() + " | Min Temprature " + weatherModels.get(position).getMinTemp() + " | Humidity " + weatherModels.get(position).getHumidity());
     }
 
     @Override

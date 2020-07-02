@@ -18,4 +18,7 @@
     <string name="nav_close_app">Exit</string>
     <string name="permission_text">Access Permission</string>
     <string name="allow_permission_message">To populate your current city weather forecast, we need your location access. However, if you do not want to allow us to access your device location. Then, by clicking Enter City button, you can add your city manually to access your current location weather forecast.</string>
+    <string name="showing_weather">Showing Weather Forecast for</string>
+    <string name="no_internet_message">It seems like you are not connected to the internet. Please get connected and try again. You will be displayed with older data.</string>
+    <string name="no_internet_message_title">No Connection</string>
 </resources>

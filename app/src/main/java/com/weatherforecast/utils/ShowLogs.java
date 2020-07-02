@@ -28,5 +28,17 @@ public class ShowLogs {
         builder.show();
     }
 
+    public static void displayAlertMessageNoInternet(Context context, String title, String message,
+                                                     AlertActionClicked alertActionClicked) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", (dialog, which) -> alertActionClicked.onPositiveButtonClicked());
+        builder.setNegativeButton("Cancel", (dialog, which) -> alertActionClicked.onNegativeButtonClicked());
+        builder.create();
+        builder.show();
+    }
+
 
 }

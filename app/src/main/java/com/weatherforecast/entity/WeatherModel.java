@@ -6,6 +6,7 @@ import io.realm.annotations.PrimaryKey;
 public class WeatherModel extends RealmObject {
 
     @PrimaryKey
+    String objectId;
     String weatherId;
     String cityId;
     double temp;
@@ -17,6 +18,7 @@ public class WeatherModel extends RealmObject {
     String weatherDesc;
     double windSpeed;
     long timeStamp;
+    boolean isCurrentCity;
 
     public WeatherModel() {
     }
@@ -33,6 +35,22 @@ public class WeatherModel extends RealmObject {
         this.weatherDesc = weatherDesc;
         this.windSpeed = windSpeed;
         this.timeStamp = timeStamp;
+    }
+
+    public boolean isCurrentCity() {
+        return isCurrentCity;
+    }
+
+    public void setCurrentCity(boolean currentCity) {
+        isCurrentCity = currentCity;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     public String getCityId() {

@@ -12,9 +12,6 @@ import com.weatherforecast.R;
 import com.weatherforecast.interfaces.CitiAccessCallbacks;
 import com.weatherforecast.interfaces.WeatherCallbacks;
 import com.weatherforecast.utils.ShowLogs;
-import com.weatherforecast.utils.UrlEncoder;
-
-import org.json.JSONObject;
 
 public class NetworkCalls {
 
@@ -39,6 +36,7 @@ public class NetworkCalls {
      * @param cityIds
      */
     public void fetchCitiesWeatherForecastData(String cityIds, CitiAccessCallbacks callbackWithData) {
+        ShowLogs.displayLog("Api Called");
         String apiUrl = context.getResources().getString(R.string.api_end_point_several_cities) +
                 cityIds +
                 "&"+
@@ -64,11 +62,11 @@ public class NetworkCalls {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public void fetchDataForACity(int lat, int lng, WeatherCallbacks callbacks){
+    public void fetchDataForACity(int lat, int lng, String cityId, WeatherCallbacks callbacks) {
         String apiUrl = null;
-        try{
-             apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
-                    "lat=" +lat+"&lon="+lng+ "&"+
+        try {
+            apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
+                    "lat=" + lat + "&lon=" + lng + "&" +
                     context.getResources().getString(R.string.group_api_key_txt) +
                     context.getResources().getString(R.string.api_key);
 
@@ -77,14 +75,40 @@ public class NetworkCalls {
                         @Override
                         public void onResponse(Object response) {
                             ShowLogs.displayLog(response.toString());
-                            callbacks.onSuccessFUlDataFetchedForACity(response.toString());
+                            callbacks.onSuccessFUlDataFetchedForACity(response.toString(), "currentCity");
                         }
                     },
                     error -> {
-                        callbacks.onSuccessFUlDataFetchedForACity(error.getLocalizedMessage());
+                        callbacks.onSuccessFUlDataFetchedForACity(error.getLocalizedMessage(), cityId);
                     });
             requestQueue.add(jsonObjectRequest);
-        }catch(Exception ex){
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void fetchDataForACityThroughId(String cityId, WeatherCallbacks callbacks) {
+        String apiUrl = null;
+        try {
+            apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
+                    "id=" + cityId + "&" +
+                    context.getResources().getString(R.string.group_api_key_txt) +
+                    context.getResources().getString(R.string.api_key);
+            ShowLogs.displayLog(apiUrl);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiUrl, null,
+                    new Response.Listener() {
+                        @Override
+                        public void onResponse(Object response) {
+                            ShowLogs.displayLog(response.toString());
+                            callbacks.onSuccessFUlDataFetchedForACity(response.toString(), cityId);
+                        }
+                    },
+                    error -> {
+                        callbacks.onSuccessFUlDataFetchedForACity(error.getLocalizedMessage(), cityId);
+                    });
+            requestQueue.add(jsonObjectRequest);
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }

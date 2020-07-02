@@ -33,8 +33,6 @@ public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks
 
     void initObjects(){
         realm = realm.getDefaultInstance();
-        ShowLogs.displayLog("Toatl no of weather row count " + realm.where(WeatherModel.class).findAll() + "");
-
         splashViewModel = new SplashViewModel(SplashScreen.this, realm, splashUiCallbacks);
     }
 

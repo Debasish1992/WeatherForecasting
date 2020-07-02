@@ -8,5 +8,7 @@ import io.realm.RealmResults;
 public interface WeatherUiCallbacks {
 
     void getCitySearchedResults(RealmResults<CityModel> cityModels);
-    void getCityForecastData(RealmResults<WeatherModel> getWeatherData);
+    void getCityForecastData(RealmResults<WeatherModel> getWeatherData, String cityId);
+    void onDataSearched(boolean status);
+    void getWeatherDetailsCount(int count, String cityId);
 }

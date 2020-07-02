@@ -1,6 +1,7 @@
 package com.weatherforecast.ui.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -14,6 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,6 +48,7 @@ import com.weatherforecast.databinding.FragmentGalleryBinding;
 import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.AlertActionClicked;
+import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.WeatherUiCallbacks;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.WeatherViewModel;
@@ -58,7 +63,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-public class WeatherFragment extends Fragment implements AlertActionClicked, WeatherUiCallbacks, SearchListAdapter.ItemClickListener {
+public class WeatherFragment extends Fragment implements AlertActionClicked, WeatherUiCallbacks, SearchListAdapter.ItemClickListener, ConnectionChecker {
 
     private String[] permissions = new String[]{ACCESS_FINE_LOCATION};
     private final int REQUEST_LOCATION_DIALOG = 999;
@@ -75,12 +80,14 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
     List<CityModel> predictionList;
     SearchListAdapter searchListAdapter;
     public static final String currentCityId = "94fgt467389";
+    EditText etSearchView;
+    TextView tvShowingresult;
 
     private void initViewModel() {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
     }
 
-    void initObjects(){
+    void initObjects() {
         cityModelList = new ArrayList<>();
         predictionList = new ArrayList<>();
         realm = Realm.getDefaultInstance();
@@ -107,13 +114,15 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
         initViewModel();
         initObjects();
         initViews(binding.getRoot());
-        weatherViewModel.initObjects(getActivity(), realm, this);
+        weatherViewModel.initObjects(getActivity(), realm, this, this);
         binding.setWeatherViewModel(weatherViewModel);
         checkAndGetLocation();
         return binding.getRoot();
     }
 
     private void initViews(View root) {
+        etSearchView = root.findViewById(R.id.etSearchBar);
+        tvShowingresult = root.findViewById(R.id.tvSearchedTextCity);
         rvForecastData = root.findViewById(R.id.rvCityList);
         rvForecastData.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvForecastData.setItemAnimator(new DefaultItemAnimator());
@@ -121,6 +130,7 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
 
 
         rvPredictionList = root.findViewById(R.id.rvPredictions);
+        rvPredictionList.setVisibility(View.GONE);
         rvPredictionList.setLayoutManager(new LinearLayoutManager(getActivity()));
         searchListAdapter = new SearchListAdapter(predictionList, getActivity());
         searchListAdapter.setClickListener(this);
@@ -203,7 +213,7 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
                     if (mFusedLocationClient != null) {
                         mFusedLocationClient.removeLocationUpdates(locationCallback);
                     }
-                    weatherViewModel.callForecastFunction(location.getLatitude(), location.getLongitude(), currentCityId);
+                    // weatherViewModel.callForecastFunction(location.getLatitude(), location.getLongitude(), "");
                     ShowLogs.displayLog("Location : " + location.getLatitude() + ":" + location.getLongitude());
                 }
             }
@@ -298,18 +308,19 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
                         break;
                 }
                 break;
-
         }
     }
 
     @Override
     public void onItemClick(View view, int position, CityModel prediction) {
-        if(prediction != null){
+        if (prediction != null) {
             String getCityId = prediction.getId();
-            if(!TextUtils.isEmpty(getCityId)) {
-                weatherViewModel.getDataWeatherDataFromLocal(getCityId);
-            }else{
-                weatherViewModel.callForecastFunction(prediction.getLat(), prediction.getLng(), getCityId);
+            hideOnScreenKeyboardForEditText(getActivity(), etSearchView);
+            rvPredictionList.setVisibility(View.GONE);
+            ShowLogs.displayLog("Clicked City id is" + getCityId);
+            tvShowingresult.setText(getActivity().getString(R.string.showing_weather) + " " + prediction.getName());
+            if (!TextUtils.isEmpty(getCityId)) {
+                weatherViewModel.getWeatherDetailsCount(getCityId);
             }
         }
     }
@@ -317,23 +328,66 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
     @Override
     public void getCitySearchedResults(RealmResults<CityModel> cityModels) {
         if (cityModels != null) {
+            ShowLogs.displayLog("Prediction Data" + cityModels.toString());
             rvPredictionList.setVisibility(View.VISIBLE);
             predictionList.clear();
             predictionList.addAll(cityModels);
             searchListAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             rvPredictionList.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void getCityForecastData(RealmResults<WeatherModel> getWeatherData) {
-        realm.beginTransaction();
-        List<WeatherModel> cityModelArrays = realm.copyFromRealm(getWeatherData);
-        realm.commitTransaction();
+    public void getCityForecastData(RealmResults<WeatherModel> getWeatherData, String cityId) {
 
-        cityModelList.clear();
-        cityModelList.addAll(cityModelArrays);
-        searchListAdapter.notifyDataSetChanged();
+        if (!getWeatherData.isEmpty()) {
+            ShowLogs.displayLog("Weather Forecast data" + getWeatherData.toString());
+            realm.beginTransaction();
+            List<WeatherModel> cityModelArrays = realm.copyFromRealm(getWeatherData);
+            rvForecastData.setVisibility(View.VISIBLE);
+            tvShowingresult.setVisibility(View.VISIBLE);
+            realm.commitTransaction();
+            etSearchView.setText(null);
+            cityModelList.clear();
+            cityModelList.addAll(cityModelArrays);
+            weatherForecastAdapter.notifyDataSetChanged();
+        } else {
+            weatherViewModel.callForecastFunction(0, 0, cityId);
+        }
+
+    }
+
+    @Override
+    public void onDataSearched(boolean status) {
+        if (status) {
+            rvForecastData.setVisibility(View.GONE);
+            tvShowingresult.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void getWeatherDetailsCount(int count, String cityId) {
+        if (count == 1 || count == 0) {
+            weatherViewModel.getDataWeatherDataFromLocal(cityId);
+            weatherViewModel.getWeatherDataForFiveDays(cityId);
+        } else {
+            weatherViewModel.getDataWeatherDataFromLocal(cityId);
+        }
+    }
+
+    public static void hideOnScreenKeyboardForEditText(Activity activity, EditText editText) {
+        ((InputMethodManager) activity.getSystemService(
+                Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(editText.getWindowToken(), 0);
+    }
+
+    @Override
+    public void isConnected(boolean status) {
+        if (!status) {
+            ShowLogs.displayAlertMessageNoInternet(getActivity(),
+                    getResources().getString(R.string.no_internet_message_title),
+                    getResources().getString(R.string.no_internet_message),
+                    this);
+        }
     }
 }
