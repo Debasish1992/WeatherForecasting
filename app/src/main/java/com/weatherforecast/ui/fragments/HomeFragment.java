@@ -20,6 +20,7 @@ import com.weatherforecast.R;
 import com.weatherforecast.adapters.CityListAdapter;
 import com.weatherforecast.databinding.FragmentHomeBinding;
 import com.weatherforecast.entity.CityModel;
+import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.HomeFragmentUiCallback;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.HomeViewModel;
@@ -38,6 +39,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
     RecyclerView rvCityList;
     Observer cityListObserver;
     List <CityModel> cityModelList;
+    List<WeatherModel> getWeatherModel;
     CityListAdapter cityListAdapter;
 
     public static HomeFragment newInstance() {
@@ -65,27 +67,52 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
-        initViews(binding.getRoot());
         initViewModel();
         initObjects();
+        initViews(binding.getRoot());
         homeViewModel.initObject(getActivity(), realm, this);
-
         binding.setHomeViewModel(homeViewModel);
+        homeViewModel.getAllCities();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initObserver();
+    }
+
+    private void initObserver() {
+        homeViewModel.cityList.observe(getViewLifecycleOwner(),cityModels -> {
+            ShowLogs.displayLog("CITY LIST DAT IN FRAGMENT : "+cityModels.size());
+            cityModelList.clear();
+            cityModelList.addAll(cityModels);
+            cityListAdapter.notifyDataSetChanged();
+        });
     }
 
     void initObjects(){
         cityModelList = new ArrayList<>();
+        getWeatherModel = new ArrayList<>();
         realm = Realm.getDefaultInstance();
+        cityListAdapter = new CityListAdapter(cityModelList,getWeatherModel,getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     private void initViewModel() {
-        homeViewModel = new HomeViewModel();
+        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
     }
 
     void initViews(View view){
         rvCityList = view.findViewById(R.id.rvCityList);
-
+        rvCityList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvCityList.setItemAnimator(new DefaultItemAnimator());
+        rvCityList.setAdapter(cityListAdapter);
     }
 
     /*void initObserver(){
@@ -99,11 +126,13 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
     }*/
 
     @Override
-    public void onSuccessfulDataFetchedFromLocalDb(List<CityModel> cityList) {
+    public void onSuccessfulDataFetchedFromLocalDb(List<CityModel> cityList, List<WeatherModel> getWeatherListModel) {
         ShowLogs.displayLog("CallBack Data " + cityList.toString());
-       /* cityListAdapter = new CityListAdapter(cityList, getActivity());
-        rvCityList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvCityList.setItemAnimator(new DefaultItemAnimator());
-        rvCityList.setAdapter(cityListAdapter);*/
+        cityModelList.clear();
+        getWeatherModel.clear();
+        cityModelList.addAll(cityList);
+        getWeatherModel.addAll(getWeatherListModel);
+       // rvCityList.setAdapter(cityListAdapter);
+        cityListAdapter.notifyDataSetChanged();
     }
 }

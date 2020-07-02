@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/txtWeather"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Places"
+        android:textColor="@color/hunter_green"
+        android:textSize="@dimen/size_20_dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardPlaceImage" />
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Text"
+        android:textColor="@color/light_grey_blue"
+        android:textSize="@dimen/text_size_16_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtWeather" />
+
+    <TextView
+        android:id="@+id/tvMinTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/txtDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="@dimen/margin_20"
+        app:layout_constraintTop_toTopOf="@+id/txtWeather"
+        android:text="dsadsadsadsa" />
+
+    <TextView
+        android:id="@+id/tvMaxTemp"
+        android:text="dsadsadsadsa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/txtDate"
+        app:layout_constraintEnd_toStartOf="@+id/tvMinTemp"
+        app:layout_constraintTop_toTopOf="@+id/txtWeather"
+        app:srcCompat="@drawable/ic_menu_gallery" />
+</androidx.constraintlayout.widget.ConstraintLayout>

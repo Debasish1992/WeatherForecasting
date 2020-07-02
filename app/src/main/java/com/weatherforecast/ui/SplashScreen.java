@@ -9,7 +9,9 @@ import android.widget.Toast;
 
 import com.weatherforecast.R;
 import com.weatherforecast.databinding.ActivityMainBinding;
+import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.SplashUiCallbacks;
+import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.SplashViewModel;
 
 import io.realm.Realm;
@@ -31,6 +33,8 @@ public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks
 
     void initObjects(){
         realm = realm.getDefaultInstance();
+        ShowLogs.displayLog("Toatl no of weather row count " + realm.where(WeatherModel.class).findAll() + "");
+
         splashViewModel = new SplashViewModel(SplashScreen.this, realm, splashUiCallbacks);
     }
 

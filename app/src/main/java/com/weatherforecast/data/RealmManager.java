@@ -6,11 +6,13 @@ import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.CitiAccessCallbacks;
 import com.weatherforecast.interfaces.WeatherCallbacks;
+import com.weatherforecast.utils.DateUtils;
 import com.weatherforecast.utils.ShowLogs;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -97,21 +99,29 @@ public class RealmManager {
     /**
      * Saving Weather Data in Realm
      *
-     * @param realm Realm Instance
-     * @param respondData The Data to be stored
+     * @param realm            Realm Instance
+     * @param respondData      The Data to be stored
      * @param weatherCallbacks Callback to Ack View Model
      */
-    public void saveWeatherData(Realm realm, String respondData, WeatherCallbacks weatherCallbacks) {
+    public void saveWeatherData(Realm realm, String respondData, String cityId, WeatherCallbacks weatherCallbacks) {
+        ShowLogs.displayLog("The city Id is" + cityId);
         try {
             JSONObject weatherData = new JSONObject(respondData);
             JSONArray listData = weatherData.getJSONArray("list");
             String weatherId = null, weatherMain = null, weatherDesc = null;
+            long timStamp;
+            String cityIdApi;
 
             for (int i = 0; i < listData.length(); i++) {
                 JSONObject weatherDetails = listData.getJSONObject(i);
-                String cityId = weatherDetails.getString("id");
-                String cityName = weatherDetails.getString("name");
-                long timStamp = weatherDetails.getLong("dt");
+
+                if (weatherDetails.has("id")) {
+                    cityIdApi = weatherDetails.getString("id");
+                } else {
+                    cityIdApi = cityId;
+                }
+
+                timStamp = weatherDetails.getLong("dt");
                 JSONArray weatherDataArray = weatherDetails.getJSONArray("weather");
                 for (int j = 0; j < weatherDataArray.length(); j++) {
                     JSONObject getWeather = weatherDataArray.getJSONObject(j);
@@ -129,38 +139,99 @@ public class RealmManager {
                 JSONObject windJsonObject = weatherDetails.getJSONObject("wind");
                 double getWindSpeed = windJsonObject.getDouble("speed");
 
-                WeatherModel weatherModel = new WeatherModel(weatherId, cityId, cityName, mainTemp, mainTempMin, mainTempMax, mainTempFeelsLike,
-                        humidity, weatherMain, weatherDesc, getWindSpeed, timStamp);
-                realm.beginTransaction();
-                realm.insertOrUpdate(weatherModel);
-                realm.commitTransaction();
+                WeatherModel weatherModelFetch = realm.where(WeatherModel.class)
+                        .equalTo("weatherId", weatherId)
+                        .findFirst();
+
+                if (weatherModelFetch == null) {
+                    realm.beginTransaction();
+                    WeatherModel weatherModel = realm.createObject(WeatherModel.class, weatherId);
+                    weatherModel.setFeelsLike(mainTempFeelsLike);
+                    weatherModel.setHumidity(humidity);
+                    weatherModel.setMaxTemp(mainTempMax);
+                    weatherModel.setMinTemp(mainTempMin);
+                    weatherModel.setTemp(mainTemp);
+                    weatherModel.setWindSpeed(getWindSpeed);
+                    weatherModel.setWeatherDesc(weatherDesc);
+                    weatherModel.setWeatherMain(weatherMain);
+                    weatherModel.setTimeStamp(timStamp);
+                    weatherModel.setCityId(cityIdApi);
+                    realm.commitTransaction();
+                } else {
+                    realm.beginTransaction();
+                    weatherModelFetch.setFeelsLike(mainTempFeelsLike);
+                    weatherModelFetch.setHumidity(humidity);
+                    weatherModelFetch.setMaxTemp(mainTempMax);
+                    weatherModelFetch.setMinTemp(mainTempMin);
+                    weatherModelFetch.setTemp(mainTemp);
+                    weatherModelFetch.setWindSpeed(getWindSpeed);
+                    weatherModelFetch.setWeatherDesc(weatherDesc);
+                    weatherModelFetch.setWeatherMain(weatherMain);
+                    weatherModelFetch.setTimeStamp(timStamp);
+                    realm.commitTransaction();
+                }
             }
-            weatherCallbacks.onSuccessfulWeatherDataSaveInRealm(true);
+            weatherCallbacks.onSuccessfulWeatherDataSaveInRealm(true, cityId);
         } catch (Exception ex) {
             ex.printStackTrace();
-            weatherCallbacks.onSuccessfulWeatherDataSaveInRealm(false);
+            ShowLogs.displayLog(ex.getLocalizedMessage());
+            weatherCallbacks.onSuccessfulWeatherDataSaveInRealm(false, null);
         }
     }
 
 
     /**
      * Function responsible for getting the weather model data from the city Id
-     * @param realm realm instance
+     *
+     * @param realm  realm instance
      * @param cityId city id
      * @return Weather Model of the city
      */
-    public WeatherModel getCityWeatherDetails(Realm realm, String cityId){
+    public RealmResults<WeatherModel> getCityWeatherDetails(Realm realm, String cityId) {
+        RealmResults<WeatherModel> weatherModels = null;
         WeatherModel weatherModel = null;
-        try{
-             weatherModel = realm.where(WeatherModel.class)
+        long currentUtcTimeStamp = DateUtils.getCurrentUTCDateTimeStamp();
+        try {
+            weatherModels = realm.where(WeatherModel.class)
                     .equalTo("cityId", cityId)
-                    .findFirst();
-            ShowLogs.displayLog("weather view model is" + weatherModel+ "");
-        }catch(Exception ex){
+                    .findAll();
+            ShowLogs.displayLog("weather view model is" + weatherModel + "");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return weatherModel;
+        return weatherModels;
+    }
 
+
+    /**
+     * Get Searched Cities
+     *
+     * @param realm
+     * @param searchPhrase
+     * @return
+     */
+    public RealmResults<CityModel> getSearchedCityModel(Realm realm, String searchPhrase) {
+        RealmResults<CityModel> cityModels = null;
+        try {
+            cityModels = realm.where(CityModel.class)
+                    .contains("name", searchPhrase, Case.INSENSITIVE)
+                    .findAll();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return cityModels;
+    }
+
+    public CityModel getSearchedCityModelDetails(Realm realm, String cityId) {
+        CityModel cityModel = null;
+        try {
+            cityModel = realm.where(CityModel.class)
+                    .contains("id", cityId)
+                    .findFirst();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return cityModel;
     }
 }
 

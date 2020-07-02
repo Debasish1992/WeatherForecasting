@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.weatherforecast.R;
 import com.weatherforecast.interfaces.CitiAccessCallbacks;
+import com.weatherforecast.interfaces.WeatherCallbacks;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.utils.UrlEncoder;
 
@@ -18,7 +19,6 @@ import org.json.JSONObject;
 public class NetworkCalls {
 
     Context context;
-    CitiAccessCallbacks CitiAccess;
     RequestQueue requestQueue;
 
 
@@ -26,11 +26,9 @@ public class NetworkCalls {
      * Function responsible for initiating the context and callbacks
      *
      * @param ctx
-     * @param callbackWithData
      */
-    public NetworkCalls(Context ctx, CitiAccessCallbacks callbackWithData) {
+    public NetworkCalls(Context ctx) {
         this.context = ctx;
-        this.CitiAccess = callbackWithData;
         requestQueue = Volley.newRequestQueue(context);
     }
 
@@ -40,7 +38,7 @@ public class NetworkCalls {
      *
      * @param cityIds
      */
-    public void fetchCitiesWeatherForecastData(String cityIds) {
+    public void fetchCitiesWeatherForecastData(String cityIds, CitiAccessCallbacks callbackWithData) {
         String apiUrl = context.getResources().getString(R.string.api_end_point_several_cities) +
                 cityIds +
                 "&"+
@@ -54,17 +52,41 @@ public class NetworkCalls {
                     @Override
                     public void onResponse(Object response) {
                         ShowLogs.displayLog(response.toString());
-                        CitiAccess.fetchDataFromApi(response.toString());
+                        callbackWithData.fetchDataFromApi(response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        CitiAccess.fetchDataFromApi(error.toString());
+                        callbackWithData.fetchDataFromApi(error.toString());
                     }
                 });
         requestQueue.add(jsonObjectRequest);
+    }
 
+    public void fetchDataForACity(int lat, int lng, WeatherCallbacks callbacks){
+        String apiUrl = null;
+        try{
+             apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
+                    "lat=" +lat+"&lon="+lng+ "&"+
+                    context.getResources().getString(R.string.group_api_key_txt) +
+                    context.getResources().getString(R.string.api_key);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiUrl, null,
+                    new Response.Listener() {
+                        @Override
+                        public void onResponse(Object response) {
+                            ShowLogs.displayLog(response.toString());
+                            callbacks.onSuccessFUlDataFetchedForACity(response.toString());
+                        }
+                    },
+                    error -> {
+                        callbacks.onSuccessFUlDataFetchedForACity(error.getLocalizedMessage());
+                    });
+            requestQueue.add(jsonObjectRequest);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 }
 

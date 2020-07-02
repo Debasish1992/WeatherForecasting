@@ -1,4 +1,6 @@
 package com.weatherforecast.entity;
+
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -11,15 +13,7 @@ public class CityModel extends RealmObject {
     String country;
     double lat;
     double lng;
-    WeatherModel weatherModel;
 
-    public WeatherModel getWeatherModel() {
-        return weatherModel;
-    }
-
-    public void setWeatherModel(WeatherModel weatherModel) {
-        this.weatherModel = weatherModel;
-    }
 
     public CityModel() {
     }

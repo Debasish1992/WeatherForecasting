@@ -131,7 +131,7 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
         if (respondData != null) {
             ShowLogs.displayLog(respondData);
             // Saving the API response into DataBase
-            realmManager.saveWeatherData(realm, respondData, this);
+            realmManager.saveWeatherData(realm, respondData, null,this);
         }
     }
 
@@ -142,13 +142,13 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
      */
     void getDataFromApi(String cities) {
         if (NetworkConnectionChecker.isConnected(act)) {
-            NetworkCalls networkCalls = new NetworkCalls(act, this);
-            networkCalls.fetchCitiesWeatherForecastData(cities);
+            NetworkCalls networkCalls = new NetworkCalls(act);
+            networkCalls.fetchCitiesWeatherForecastData(cities, this);
         }
     }
 
     @Override
-    public void onSuccessfulWeatherDataSaveInRealm(boolean status) {
+    public void onSuccessfulWeatherDataSaveInRealm(boolean status, String cityId) {
         if (status) {
             splashUiCallbacks.letUserRedirectToHome(true);
             Toast.makeText(act, "Data Saved Successfully", Toast.LENGTH_SHORT).show();
@@ -158,8 +158,14 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
 
     }
 
+
     @Override
     public void getTotalNoOfRowsFromWeatherTable(int count) {
+
+    }
+
+    @Override
+    public void onSuccessFUlDataFetchedForACity(String response) {
 
     }
 }

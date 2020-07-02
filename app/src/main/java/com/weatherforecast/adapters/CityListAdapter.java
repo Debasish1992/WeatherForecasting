@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.weatherforecast.R;
 import com.weatherforecast.entity.CityModel;
+import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.utils.ShowLogs;
 
 import java.util.List;
@@ -20,10 +21,12 @@ import java.util.List;
 public class CityListAdapter extends RecyclerView.Adapter<CityListAdapter.ViewHolder>  {
 
     List<CityModel> cityModelList;
+    List<WeatherModel> weatherModels;
     Context context;
 
-    public CityListAdapter(List<CityModel> cityModelList, Context context) {
+    public CityListAdapter(List<CityModel> cityModelList, List<WeatherModel> getWeatherData, Context context) {
         this.cityModelList = cityModelList;
+        this.weatherModels = getWeatherData;
         ShowLogs.displayLog("Adapter Arraylist " + cityModelList.toString());
         this.context = context;
     }
@@ -38,16 +41,15 @@ public class CityListAdapter extends RecyclerView.Adapter<CityListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull CityListAdapter.ViewHolder holder, int position) {
         CityModel cityModel = cityModelList.get(position);
+        //if(!TextUtils.isEmpty(cityModel.getState())){
+            holder.tvCityName.setText(cityModel.getName());
+         //   holder.tvCityTemp.setText(weatherModels.get(position).getTemp() + "");
+        //}
 
-        if(cityModel.getWeatherModel() != null){
-            ShowLogs.displayLog("Data Avaialve");
-        }
-        if(!TextUtils.isEmpty(cityModel.getState())){
-            holder.tvCityName.setText(cityModel.getName() + ", " + TextUtils.isEmpty(cityModel.getState()));
-        }
 
-        holder.tvCityTemp.setText("Temprature " + cityModel.getWeatherModel().getTemp());
-        holder.tvCityWeather.setText("Max Temprature " + cityModel.getWeatherModel().getMaxTemp() + "| Min Temprature " + cityModel.getWeatherModel().getMinTemp() + "| Humidity " + cityModel.getWeatherModel().getHumidity());
+
+        //holder.tvCityTemp.setText("Temprature " + cityModel.getWeatherModel().get(0).getTemp());
+        //holder.tvCityWeather.setText("Max Temprature " + cityModel.getWeatherModel().get(0).getMaxTemp() + "| Min Temprature " + cityModel.getWeatherModel().get(0).getMinTemp() + "| Humidity " + cityModel.getWeatherModel().get(0).getHumidity());
     }
 
     @Override

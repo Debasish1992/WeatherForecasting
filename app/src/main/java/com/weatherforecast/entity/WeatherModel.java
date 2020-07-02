@@ -8,7 +8,6 @@ public class WeatherModel extends RealmObject {
     @PrimaryKey
     String weatherId;
     String cityId;
-    String cityName;
     double temp;
     double minTemp;
     double maxTemp;
@@ -22,13 +21,9 @@ public class WeatherModel extends RealmObject {
     public WeatherModel() {
     }
 
-    public WeatherModel(String weatherId, String cityId, String cityName,
-                        double temp, double minTemp, double maxTemp, double feelsLike,
-                        int humidity, String weatherMain, String weatherDesc, double windSpeed,
-                        long timeStamp) {
+    public WeatherModel(String weatherId, double temp, double minTemp, double maxTemp,
+                        double feelsLike, int humidity, String weatherMain, String weatherDesc, double windSpeed, long timeStamp) {
         this.weatherId = weatherId;
-        this.cityId = cityId;
-        this.cityName = cityName;
         this.temp = temp;
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
@@ -40,6 +35,14 @@ public class WeatherModel extends RealmObject {
         this.timeStamp = timeStamp;
     }
 
+    public String getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+
     public double getTemp() {
         return temp;
     }
@@ -48,13 +51,6 @@ public class WeatherModel extends RealmObject {
         this.temp = temp;
     }
 
-    public String getCityName() {
-        return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
 
     public String getWeatherId() {
         return weatherId;
@@ -64,13 +60,6 @@ public class WeatherModel extends RealmObject {
         this.weatherId = weatherId;
     }
 
-    public String getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(String cityId) {
-        this.cityId = cityId;
-    }
 
     public double getMinTemp() {
         return minTemp;
