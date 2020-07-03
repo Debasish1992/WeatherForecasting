@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +21,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.weatherforecast.R;
 import com.weatherforecast.ui.fragments.HomeFragment;
@@ -38,10 +39,32 @@ public class HomeScreen extends AppCompatActivity implements NavigationView.OnNa
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        toggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        toggle.syncState();
+    }
+
+    @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -54,19 +77,35 @@ public class HomeScreen extends AppCompatActivity implements NavigationView.OnNa
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_top_cities, R.id.nav_weather, R.id.nav_exit)
-                .setDrawerLayout(drawer)
+                .setDrawerLayout(drawerLayout)
                 .build();
+
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open
+                , R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+
+        drawerLayout.addDrawerListener(toggle);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
-
 
 
     void replaceFragment(Fragment fragment, String fragmentTag){
@@ -105,28 +144,28 @@ public class HomeScreen extends AppCompatActivity implements NavigationView.OnNa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Fragment fragment = getSupportFragmentManager()
-                .findFragmentById(R.id.drawer_layout);
-        Log.d("TAGGG", "GPS onActivityResult: ");
-        if (fragment != null && fragment instanceof WeatherFragment){
-            fragment.onActivityResult(requestCode, resultCode, data);
-        }
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        ShowLogs.displayLog("CURENT FRAGMENT: " + navHostFragment.getClass().getSimpleName());
+        Fragment fragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+        fragment.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("TAGGG", "GPS onRequestPermissionsResult: ");
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.drawer_layout);
-        if (fragment != null && fragment instanceof WeatherFragment){
-            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        ShowLogs.displayLog("CURENT FRAGMENT: " + navHostFragment.getClass().getSimpleName());
+        Fragment fragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
 
     private void locationEnableStatus(boolean status) {
         Fragment frg = getSupportFragmentManager()
-                .findFragmentById(R.id.container);
+                .findFragmentById(R.id.nav_host_fragment);
         ShowLogs.displayLog("Location Enabled");
-        if (frg != null && frg instanceof WeatherFragment) {
+        if (frg != null) {
             WeatherFragment places = (WeatherFragment) frg;
             places.locationEnableStatus(status);
         }

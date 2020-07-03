@@ -57,8 +57,11 @@ public class CityListAdapter extends RecyclerView.Adapter<CityListAdapter.ViewHo
                 .centerCrop()
                 .into(holder.ivCityImage);
 
-        holder.tvCityTemp.setText("Temprature - " + cityModel.getTemp() + (char) 0x00B0 + "C" + "\n\n" + "Last Updated at " + toDate(cityModel.getUpdatedAt()));
-        holder.tvCityWeather.setText(cityModel.getWeatherMain() + " | " + cityModel.getWeatherDesc() + "\n\n"+ "Max Temprature - " + cityModel.getMaxTemp() + (char) 0x00B0 + "C" + " | Min Temprature - " + cityModel.getMinTemp() + (char) 0x00B0 + "C" + " | Humidity - " + cityModel.getHumidity());
+        if(cityModel.getTemp() != 0){
+            holder.tvCityTemp.setText("Temprature - " + cityModel.getTemp() + (char) 0x00B0 + "C" + "\n\n" + "Last Updated at " + toDate(cityModel.getUpdatedAt()));
+            holder.tvCityWeather.setText(cityModel.getWeatherMain() + " | " + cityModel.getWeatherDesc() + "\n\n"+ "Max Temprature - " + cityModel.getMaxTemp() + (char) 0x00B0 + "C" + " | Min Temprature - " + cityModel.getMinTemp() + (char) 0x00B0 + "C" + " | Humidity - " + cityModel.getHumidity());
+        }
+
 
         holder.tvLastUpdated.setOnClickListener(v -> {
             int pos  = position;

@@ -24,6 +24,7 @@ import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.AlertActionClicked;
 import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.HomeFragmentUiCallback;
+import com.weatherforecast.utils.ConnectivityManager;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.HomeViewModel;
 
@@ -65,8 +66,9 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback, Co
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
+
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
@@ -75,7 +77,6 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback, Co
         initViews(binding.getRoot());
         homeViewModel.initObject(getActivity(), realm, this, this);
         binding.setHomeViewModel(homeViewModel);
-        homeViewModel.getAllCities();
         return binding.getRoot();
     }
 
@@ -104,7 +105,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback, Co
     @Override
     public void onResume() {
         super.onResume();
-
+        homeViewModel.getAllCities();
     }
 
     private void initViewModel() {
@@ -137,6 +138,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback, Co
         getWeatherModel.clear();
         cityModelList.addAll(cityList);
         cityListAdapter.notifyDataSetChanged();
+        homeViewModel.getNetworkConnectionStatus();
     }
 
     @Override
@@ -152,6 +154,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback, Co
 
     @Override
     public void onPositiveButtonClicked() {
+        ConnectivityManager.turnOnMobileData(getActivity());
 
     }
 

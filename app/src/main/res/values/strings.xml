@@ -6,8 +6,6 @@
     <string name="api_end_point_several_cities">http://api.openweathermap.org/data/2.5/group?id=</string>
     <string name="api_end_point_city_specific">https://api.openweathermap.org/data/2.5/forecast?</string>
     <string name="title_activity_city_listing_screen">CityListingScreen</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Weather Forecasting</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -20,7 +18,9 @@
     <string name="permission_text">Access Permission</string>
     <string name="allow_permission_message">To populate your current city weather forecast, we need your location access. However, You can access other cities weather, by searching in the top search bar.</string>
     <string name="showing_weather">Showing Weather Forecast for</string>
-    <string name="no_internet_message">It seems like you are not connected to the internet. Please get connected and try again. For now, You will be displayed with older data.</string>
+    <string name="no_internet_message">It seems like you are not connected to the internet. Please enable network connection and try again. For now, You will be displayed with older data.</string>
     <string name="no_internet_message_title">No Connection</string>
     <string name="locate">Locate</string>
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
 </resources>

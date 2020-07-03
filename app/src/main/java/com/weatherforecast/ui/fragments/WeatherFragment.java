@@ -12,7 +12,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -50,6 +52,7 @@ import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.AlertActionClicked;
 import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.WeatherUiCallbacks;
+import com.weatherforecast.utils.ConnectivityManager;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.WeatherViewModel;
 
@@ -87,6 +90,8 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
     private void initViewModel() {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
     }
+
+
 
     void initObjects() {
         cityModelList = new ArrayList<>();
@@ -213,12 +218,10 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
                     if (mFusedLocationClient != null) {
                         mFusedLocationClient.removeLocationUpdates(locationCallback);
                     }
-
                     currentCityLatitude = location.getLatitude();
                     currentCityLongitude = location.getLongitude();
                     weatherViewModel.getWeatherDetailsCount("currentCity");
-
-                    ShowLogs.displayLog("Location : " + location.getLatitude() + ":" + location.getLongitude());
+                    tvShowingresult.setText(getActivity().getString(R.string.showing_weather) + " " + "Current City");
                 }
             }
         };
@@ -279,7 +282,7 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
 
     @Override
     public void onPositiveButtonClicked() {
-
+        ConnectivityManager.turnOnMobileData(getActivity());
     }
 
     @Override
@@ -345,15 +348,12 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
     @Override
     public void getCityForecastData(RealmResults<WeatherModel> getWeatherData, String cityId) {
         if (!getWeatherData.isEmpty()) {
-            ShowLogs.displayLog("Weather Forecast data" + getWeatherData.toString());
+            ShowLogs.displayLog("CityID" + cityId);
             realm.beginTransaction();
             List<WeatherModel> cityModelArrays = realm.copyFromRealm(getWeatherData);
             realm.commitTransaction();
             rvForecastData.setVisibility(View.VISIBLE);
             tvShowingresult.setVisibility(View.VISIBLE);
-            if(cityId != null && cityId.equalsIgnoreCase("currentCity")){
-                tvShowingresult.setText("Showing result for your Current City");
-            }
             etSearchView.setText(null);
             cityModelList.clear();
             cityModelList.addAll(cityModelArrays);
@@ -369,6 +369,9 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
         if (status) {
             rvForecastData.setVisibility(View.GONE);
             tvShowingresult.setVisibility(View.GONE);
+        }else{
+            rvForecastData.setVisibility(View.VISIBLE);
+            tvShowingresult.setVisibility(View.VISIBLE);
         }
     }
 

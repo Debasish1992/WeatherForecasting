@@ -184,4 +184,8 @@ public class HomeViewModel extends ViewModel implements CitiAccessCallbacks, Wea
             ex.printStackTrace();
         }
     }
+
+    public void getNetworkConnectionStatus() {
+        connectionChecker.isConnected(NetworkConnectionChecker.isConnected(ctx));
+    }
 }

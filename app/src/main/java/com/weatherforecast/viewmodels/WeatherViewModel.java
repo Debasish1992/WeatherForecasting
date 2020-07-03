@@ -167,6 +167,7 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
             RealmResults<CityModel> searchedResults = realmManager.getSearchedCityModel(getRealm, phrase.toString());
             callbacks.getCitySearchedResults(searchedResults);
         } else {
+            callbacks.onDataSearched(false);
             callbacks.getCitySearchedResults(null);
         }
 

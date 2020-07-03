@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.AlertActionClicked;
 import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.SplashUiCallbacks;
+import com.weatherforecast.utils.ConnectivityManager;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.SplashViewModel;
 
@@ -71,6 +73,7 @@ public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks
 
     @Override
     public void onPositiveButtonClicked() {
+        ConnectivityManager.turnOnMobileData(SplashScreen.this);
         redirectUser();
     }
 
@@ -85,4 +88,6 @@ public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks
         SplashScreen.this.finish();
         startActivity(new Intent(SplashScreen.this, HomeScreen.class));
     }
+
+
 }
