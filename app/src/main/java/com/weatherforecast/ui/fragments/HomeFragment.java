@@ -88,7 +88,6 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback, Co
 
     private void initObserver() {
         homeViewModel.cityList.observe(getViewLifecycleOwner(),cityModels -> {
-            ShowLogs.displayLog("CITY LIST DAT IN FRAGMENT : "+cityModels.size());
             cityModelList.clear();
             cityModelList.addAll(cityModels);
             cityListAdapter.notifyDataSetChanged();
@@ -133,7 +132,6 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback, Co
     @Override
     public void onSuccessfulDataFetchedFromLocalDb(List<CityModel> cityList) {
         swipeRefreshLayout.setRefreshing(false);
-        ShowLogs.displayLog("CallBack Data " + cityList.toString());
         cityModelList.clear();
         getWeatherModel.clear();
         cityModelList.addAll(cityList);
