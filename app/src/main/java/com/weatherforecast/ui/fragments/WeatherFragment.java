@@ -82,6 +82,7 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
     public static final String currentCityId = "94fgt467389";
     EditText etSearchView;
     TextView tvShowingresult;
+    double currentCityLatitude, currentCityLongitude;
 
     private void initViewModel() {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
@@ -213,7 +214,11 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
                     if (mFusedLocationClient != null) {
                         mFusedLocationClient.removeLocationUpdates(locationCallback);
                     }
-                    // weatherViewModel.callForecastFunction(location.getLatitude(), location.getLongitude(), "");
+
+                    currentCityLatitude = location.getLatitude();
+                    currentCityLongitude = location.getLongitude();
+                    weatherViewModel.getWeatherDetailsCount("currentCity");
+
                     ShowLogs.displayLog("Location : " + location.getLatitude() + ":" + location.getLongitude());
                 }
             }
@@ -340,13 +345,16 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
 
     @Override
     public void getCityForecastData(RealmResults<WeatherModel> getWeatherData, String cityId) {
-
         if (!getWeatherData.isEmpty()) {
             ShowLogs.displayLog("Weather Forecast data" + getWeatherData.toString());
             realm.beginTransaction();
             List<WeatherModel> cityModelArrays = realm.copyFromRealm(getWeatherData);
             rvForecastData.setVisibility(View.VISIBLE);
             tvShowingresult.setVisibility(View.VISIBLE);
+            if(cityId != null && cityId.equalsIgnoreCase("currentCity")){
+                tvShowingresult.setVisibility(View.VISIBLE);
+                tvShowingresult.setText("Showing result for your Current City");
+            }
             realm.commitTransaction();
             etSearchView.setText(null);
             cityModelList.clear();
@@ -368,12 +376,17 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
 
     @Override
     public void getWeatherDetailsCount(int count, String cityId) {
-        if (count == 1 || count == 0) {
+       /* if (count == 1 || count == 0) {*/
+            if(cityId != null && cityId.equalsIgnoreCase("currentCity")){
+                weatherViewModel.getDataWeatherDataFromLocal(cityId);
+                weatherViewModel.callForecastFunction(currentCityLatitude, currentCityLongitude, "");
+            }else{
+                weatherViewModel.getDataWeatherDataFromLocal(cityId);
+                weatherViewModel.getWeatherDataForFiveDays(cityId);
+            }
+        /*} else {
             weatherViewModel.getDataWeatherDataFromLocal(cityId);
-            weatherViewModel.getWeatherDataForFiveDays(cityId);
-        } else {
-            weatherViewModel.getDataWeatherDataFromLocal(cityId);
-        }
+        }*/
     }
 
     public static void hideOnScreenKeyboardForEditText(Activity activity, EditText editText) {

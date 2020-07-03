@@ -1,6 +1,7 @@
 package com.weatherforecast.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.weatherforecast.R;
 import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.entity.WeatherModel;
@@ -41,8 +43,13 @@ public class CityListAdapter extends RecyclerView.Adapter<CityListAdapter.ViewHo
     public void onBindViewHolder(@NonNull CityListAdapter.ViewHolder holder, int position) {
         CityModel cityModel = cityModelList.get(position);
         holder.tvCityName.setText(cityModel.getName() + ", " + cityModel.getCountry());
-        holder.tvCityTemp.setText("Temprature " + weatherModels.get(position).getTemp() + "");
-        holder.tvCityWeather.setText("Max Temprature " + weatherModels.get(position).getMaxTemp() + " | Min Temprature " + weatherModels.get(position).getMinTemp() + " | Humidity " + weatherModels.get(position).getHumidity());
+        holder.tvCityTemp.setText("Temprature - " + weatherModels.get(position).getTemp()  + (char) 0x00B0 + "C");
+        holder.tvCityWeather.setText("Max Temprature - " + weatherModels.get(position).getMaxTemp() + (char) 0x00B0 + "C" + " | Min Temprature - " + weatherModels.get(position).getMinTemp() + (char) 0x00B0 + "C" + " | Humidity - " + weatherModels.get(position).getHumidity());
+
+        Glide.with(context)
+                .load(cityModel.getImage())
+                .centerCrop()
+                .into(holder.ivCityImage);
     }
 
     @Override

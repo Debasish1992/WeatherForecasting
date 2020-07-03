@@ -64,7 +64,7 @@ public class HomeScreen extends AppCompatActivity implements NavigationView.OnNa
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);*/
-        replaceFragment(HomeFragment.newInstance(), "Home");
+        replaceFragment(WeatherFragment.newInstance(), "Home");
     }
 
     @Override

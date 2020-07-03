@@ -1,5 +1,6 @@
 package com.weatherforecast.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.icu.text.TimeZoneFormat;
@@ -39,6 +40,8 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
         this.cityModels = cityModels;
     }
 
+
+
     @NonNull
     @Override
     public WeatherForecastAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,16 +53,27 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.tvWeather.setText(cityModels.get(position).getWeatherMain());
-        holder.tvDate.setText(/*getDate(*/cityModels.get(position).getWeatherDesc() /*)*/);
-        holder.tvMinTemp.setText("Min - " + cityModels.get(position).getMinTemp());
-        holder.tvMaxtemp.setText("Max - " + cityModels.get(position).getMaxTemp() + " | ");
+        holder.tvDate.setText(cityModels.get(position).getWeatherDesc()+ "\n\n" + getDateCurrentTimeZone(cityModels.get(position).getTimeStamp()));
+        holder.tvMinTemp.setText("Min - " + cityModels.get(position).getMinTemp() + (char) 0x00B0 + "C");
+        holder.tvMaxtemp.setText("Max - " + cityModels.get(position).getMaxTemp() + (char) 0x00B0 + "C" + " | ");
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-   /* public static String getDate(long time) throws ParseException {
-
-    }*/
+    @SuppressLint("NewApi")
+    public  String getDateCurrentTimeZone(long timeStamp) {
+        try{
+            Calendar calendar = Calendar.getInstance();
+            TimeZone tz = TimeZone.getDefault();
+            calendar.setTimeInMillis(timeStamp * 1000);
+            calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.getTimeInMillis()));
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy, hh:mm a");
+            Date currenTimeZone = (Date) calendar.getTime();
+            ShowLogs.displayLog("Formatted Date is " + sdf.format(currenTimeZone));
+            return sdf.format(currenTimeZone);
+        }catch (Exception e) {
+        }
+        return "";
+    }
 
     @Override
     public int getItemCount() {

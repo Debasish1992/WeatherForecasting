@@ -41,7 +41,7 @@ public class NetworkCalls {
                 cityIds +
                 "&"+
                 context.getResources().getString(R.string.group_api_key_txt) +
-                context.getResources().getString(R.string.api_key);
+                context.getResources().getString(R.string.api_key)+"&"+context.getResources().getString(R.string.temp_unit);
         // Encoding the URL before Calling the API
         //apiUrl = UrlEncoder.encode(apiUrl);
         ShowLogs.displayLog(apiUrl);
@@ -68,7 +68,8 @@ public class NetworkCalls {
             apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
                     "lat=" + lat + "&lon=" + lng + "&" +
                     context.getResources().getString(R.string.group_api_key_txt) +
-                    context.getResources().getString(R.string.api_key);
+                    context.getResources().getString(R.string.api_key) +"&"+context.getResources().getString(R.string.temp_unit);
+            ShowLogs.displayLog(apiUrl);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiUrl, null,
                     new Response.Listener() {
@@ -79,7 +80,7 @@ public class NetworkCalls {
                         }
                     },
                     error -> {
-                        callbacks.onSuccessFUlDataFetchedForACity(error.getLocalizedMessage(), cityId);
+                        callbacks.onSuccessFUlDataFetchedForACity(error.getLocalizedMessage(), "currentCity");
                     });
             requestQueue.add(jsonObjectRequest);
         } catch (Exception ex) {
@@ -93,7 +94,7 @@ public class NetworkCalls {
             apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
                     "id=" + cityId + "&" +
                     context.getResources().getString(R.string.group_api_key_txt) +
-                    context.getResources().getString(R.string.api_key);
+                    context.getResources().getString(R.string.api_key)+"&"+context.getResources().getString(R.string.temp_unit);
             ShowLogs.displayLog(apiUrl);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiUrl, null,

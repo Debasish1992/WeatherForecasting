@@ -106,7 +106,12 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
     @Override
     public void onSuccessFUlDataFetchedForACity(String response, String cityId) {
         ShowLogs.displayLog("City Data Fetched from API" + cityId);
-        realmManager.saveWeatherData(getRealm, response, cityId,this);
+        realmManager.deleteRowsForCityWeather(getRealm, cityId);
+        if(cityId != null && cityId.equalsIgnoreCase("currentCity")){
+            realmManager.saveCurrentCityWeatherData(getRealm, response, cityId,this);
+        }else{
+            realmManager.saveWeatherData(getRealm, response, cityId,this);
+        }
     }
 
     public void onTextChanged(CharSequence phrase, int start, int before, int count) {

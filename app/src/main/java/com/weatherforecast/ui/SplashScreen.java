@@ -3,7 +3,9 @@ package com.weatherforecast.ui;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -13,6 +15,10 @@ import com.weatherforecast.entity.WeatherModel;
 import com.weatherforecast.interfaces.SplashUiCallbacks;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.SplashViewModel;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import io.realm.Realm;
 
@@ -30,6 +36,8 @@ public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks
         splashUiCallbacks = this;
         initObjects();
     }
+
+
 
     void initObjects(){
         realm = realm.getDefaultInstance();
