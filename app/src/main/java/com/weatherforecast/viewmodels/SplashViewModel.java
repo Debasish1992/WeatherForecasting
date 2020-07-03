@@ -11,12 +11,14 @@ import com.weatherforecast.data.RealmManager;
 import com.weatherforecast.data.network.NetworkCalls;
 import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.interfaces.CitiAccessCallbacks;
+import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.SplashUiCallbacks;
 import com.weatherforecast.interfaces.WeatherCallbacks;
 import com.weatherforecast.ui.SplashScreen;
 import com.weatherforecast.utils.NetworkConnectionChecker;
 import com.weatherforecast.utils.ParseJSON;
 import com.weatherforecast.utils.ShowLogs;
+import com.weatherforecast.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,12 +36,14 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
     RealmManager realmManager;
     SplashUiCallbacks splashUiCallbacks;
     WeatherCallbacks callBackForWeather;
+    ConnectionChecker checker;
 
-    public SplashViewModel(Activity activity, Realm realmObject, SplashUiCallbacks splashUiCallbacks) {
+    public SplashViewModel(Activity activity, Realm realmObject, SplashUiCallbacks splashUiCallbacks, ConnectionChecker conn) {
         this.citiAccessCallbacks = this;
         callBackForWeather = this;
         this.act = activity;
         this.realm = realmObject;
+        this.checker = conn;
         this.splashUiCallbacks = splashUiCallbacks;
         realmManager = RealmManager.getInstance();
         // Getting the total no of cities from Realm
@@ -73,10 +77,9 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
                 }
                 // Checking for previous data
                 int getCount = realmManager.getWeatherDataCount(realm);
-
                 if (getCount == 0)
                     // Calling the Weather API after getting all the Ids
-                    callWeatherAPi(getCommaSeparatedIds(idsArray));
+                    callWeatherAPi(StringUtils.getCommaSeparatedIds(idsArray));
             } else {
                 // Calling the Weather API after getting all the Ids from realm
                 realmManager.getAllCities(realm, this);
@@ -90,16 +93,13 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
     @Override
     public void getAllCities(RealmResults<CityModel> cityModels) {
         ShowLogs.displayLog(cityModels.toString());
-        // Checking for previous data
-        int getCount = realmManager.getWeatherDataCount(realm);
-
-        if (!cityModels.isEmpty() && getCount == 0) {
+        if (cityModels.isEmpty()) {
             ArrayList<String> getAllCityIds = new ArrayList<>();
             for (int i = 0; i < cityModels.size(); i++) {
                 getAllCityIds.add(cityModels.get(i).getId());
             }
             // Convert the List of String to String
-            String idsStr = getCommaSeparatedIds(getAllCityIds);
+            String idsStr = StringUtils.getCommaSeparatedIds(getAllCityIds);
             ShowLogs.displayLog("All Ids are" + idsStr);
             // Calling the Weather API after getting all the Ids
             callWeatherAPi(idsStr);
@@ -115,18 +115,9 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
         getDataFromApi(ids);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    String getCommaSeparatedIds(ArrayList<String> originalString) {
-        String idsStr = null;
-        try {
-            idsStr = String.join(", ", originalString);
-            idsStr = idsStr.replace(" ", "");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return idsStr;
-    }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void fetchDataFromApi(String respondData) {
         if (respondData != null) {
@@ -145,6 +136,8 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
         if (NetworkConnectionChecker.isConnected(act)) {
             NetworkCalls networkCalls = new NetworkCalls(act);
             networkCalls.fetchCitiesWeatherForecastData(cities, this);
+        }else{
+            checker.isConnected(false);
         }
     }
 
@@ -152,7 +145,6 @@ public class SplashViewModel extends ViewModel implements CitiAccessCallbacks, W
     public void onSuccessfulWeatherDataSaveInRealm(boolean status, String cityId) {
         if (status) {
             splashUiCallbacks.letUserRedirectToHome(true);
-            Toast.makeText(act, "Data Saved Successfully", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(act, "There was an error", Toast.LENGTH_SHORT).show();
         }

@@ -47,12 +47,6 @@ k
 ;app/src/main/java/com/weatherforecast/entity/CityModel.java,a/8/a8d5da135216da4c24232d83f3bd65e583ade23f
 c
 3app/src/main/res/drawable/bg_button_stroke_grey.xml,2/d/2da2b88582dfbfe587b8846c28aae13caf9d93de
-h
-8app/src/main/res/layout/activity_city_listing_screen.xml,a/9/a96cc51c65c16f22f0c69ceffd41f2b2bd24e5ff
-X
-(app/src/main/res/layout/app_bar_main.xml,6/f/6f97cd8a191d695dc0396291b7e88ceff15e43bb
-Y
-)app/src/main/res/layout/fragment_home.xml,3/1/31c5880846ef63ff1963efbe141ddfd56680bb19
 a
 1app/src/main/res/layout/layout_places_display.xml,8/9/89f14bcb5b4acb5c5c96bb6911ff7dc45d726108
 R
@@ -69,8 +63,6 @@ S
 build.gradle,f/0/f07866736216be0ee2aba49e392191aeae700a35
 x
 Happ/src/main/java/com/weatherforecast/interfaces/AlertActionClicked.java,7/8/78e0ff9bd6b4883eb17166bee4ba8ae1c7c32b17
-b
-2app/src/main/res/layout/layout_citi_card_items.xml,7/f/7ffb516b63a75f4b37a34fbb94e5150d036a1ccb
 w
 Gapp/src/main/java/com/weatherforecast/interfaces/ConnectionChecker.java,d/f/df42cbd5d256a5fee57aae131524e0b4f22b86b1
 i

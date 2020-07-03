@@ -14,6 +14,87 @@ public class CityModel extends RealmObject {
     double lat;
     double lng;
     String image;
+    String weatherMain;
+    String weatherDesc;
+    double temp;
+    double minTemp;
+    double maxTemp;
+    double feelsLike;
+    long timeSTamp;
+    int humidity;
+    long updatedAt;
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public long getTimeSTamp() {
+        return timeSTamp;
+    }
+
+    public void setTimeSTamp(long timeSTamp) {
+        this.timeSTamp = timeSTamp;
+    }
+
+    public int getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
+    public String getWeatherMain() {
+        return weatherMain;
+    }
+
+    public void setWeatherMain(String weatherMain) {
+        this.weatherMain = weatherMain;
+    }
+
+    public String getWeatherDesc() {
+        return weatherDesc;
+    }
+
+    public void setWeatherDesc(String weatherDesc) {
+        this.weatherDesc = weatherDesc;
+    }
+
+    public double getTemp() {
+        return temp;
+    }
+
+    public void setTemp(double temp) {
+        this.temp = temp;
+    }
+
+    public double getMinTemp() {
+        return minTemp;
+    }
+
+    public void setMinTemp(double minTemp) {
+        this.minTemp = minTemp;
+    }
+
+    public double getMaxTemp() {
+        return maxTemp;
+    }
+
+    public void setMaxTemp(double maxTemp) {
+        this.maxTemp = maxTemp;
+    }
+
+    public double getFeelsLike() {
+        return feelsLike;
+    }
+
+    public void setFeelsLike(double feelsLike) {
+        this.feelsLike = feelsLike;
+    }
 
     public String getImage() {
         return image;

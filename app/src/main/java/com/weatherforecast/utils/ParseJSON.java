@@ -1,6 +1,7 @@
 package com.weatherforecast.utils;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ public class ParseJSON {
      * @param activity Context
      * @return JSON String
      */
-    public static String loadJSONFromAsset(Activity activity) {
+    public static String loadJSONFromAsset(Context activity) {
         String json = null;
         try {
             InputStream is = activity.getAssets().open("city_data.json");

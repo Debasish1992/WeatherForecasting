@@ -22,8 +22,8 @@ public class ShowLogs {
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setCancelable(false);
-        builder.setPositiveButton("Enter City", (dialog, which) -> alertActionClicked.onPositiveButtonClicked());
-        builder.setNegativeButton("No Thanks", (dialog, which) -> alertActionClicked.onNegativeButtonClicked());
+        builder.setPositiveButton("OK", (dialog, which) -> alertActionClicked.onPositiveButtonClicked());
+        builder.setNegativeButton("Cancel", (dialog, which) -> alertActionClicked.onNegativeButtonClicked());
         builder.create();
         builder.show();
     }

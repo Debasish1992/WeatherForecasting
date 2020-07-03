@@ -1,7 +1,6 @@
 package com.weatherforecast.viewmodels;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -40,6 +39,15 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
         return mText;
     }
 
+
+    /**
+     * Initializing Objects
+     *
+     * @param contxt            Current Context
+     * @param realm             realm Instance
+     * @param callbacks         CallBack
+     * @param connectionChecker Internet connection checker
+     */
     public void initObjects(Context contxt, Realm realm, WeatherUiCallbacks callbacks, ConnectionChecker connectionChecker) {
         this.getRealm = realm;
         this.context = contxt;
@@ -48,6 +56,14 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
         realmManager = RealmManager.getInstance();
     }
 
+
+    /**
+     * Web service call to get weather data from cloud for current location
+     *
+     * @param lat
+     * @param lng
+     * @param cityId
+     */
     public void callForecastFunction(double lat, double lng, String cityId) {
         try {
             this.cityIdDb = cityId;
@@ -55,8 +71,8 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
             int longitude = (int) lng;
             if (NetworkConnectionChecker.isConnected(context)) {
                 NetworkCalls networkCalls = new NetworkCalls(context);
-                networkCalls.fetchDataForACity(latitide, longitude,null,this);
-            }else{
+                networkCalls.fetchDataForACity(latitide, longitude, null, this);
+            } else {
                 connectionChecker.isConnected(false);
             }
         } catch (Exception ex) {
@@ -64,25 +80,43 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
         }
     }
 
-    public void getWeatherDataForFiveDays(String cityId){
-        try{
+
+    /**
+     * Function responsible for fetching weather Data for next 5 days using cityId
+     *
+     * @param cityId CIty Id
+     */
+    public void getWeatherDataForFiveDays(String cityId) {
+        try {
             if (NetworkConnectionChecker.isConnected(context)) {
                 NetworkCalls networkCalls = new NetworkCalls(context);
-                networkCalls.fetchDataForACityThroughId(cityId,this);
-            }else{
+                networkCalls.fetchDataForACityThroughId(cityId, this);
+            } else {
                 connectionChecker.isConnected(false);
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void  getDataWeatherDataFromLocal(String cityId){
+
+    /**
+     * Fetching weather data from local db
+     *
+     * @param cityId city Id
+     */
+    public void getDataWeatherDataFromLocal(String cityId) {
         RealmResults<WeatherModel> getWeatherData = realmManager.getCityWeatherDetails(getRealm, cityId);
         callbacks.getCityForecastData(getWeatherData, cityId);
     }
 
-    public void getWeatherDetailsCount(String cityId){
+
+    /**
+     * Function to get Weather Object count for a specific city Using Object Id
+     *
+     * @param cityId
+     */
+    public void getWeatherDetailsCount(String cityId) {
         int count = realmManager.getWeatherDetailsCount(getRealm, cityId);
         callbacks.getWeatherDetailsCount(count, cityId);
     }
@@ -90,6 +124,7 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
     @Override
     public void onSuccessfulWeatherDataSaveInRealm(boolean status, String cityIdDb) {
         if (status) {
+            // Getting city Weather from local DB using city Id
             RealmResults<WeatherModel> getWeatherData = realmManager.getCityWeatherDetails(getRealm, cityIdDb);
             callbacks.getCityForecastData(getWeatherData, cityIdDb);
         } else {
@@ -105,15 +140,26 @@ public class WeatherViewModel extends ViewModel implements WeatherCallbacks {
 
     @Override
     public void onSuccessFUlDataFetchedForACity(String response, String cityId) {
-        ShowLogs.displayLog("City Data Fetched from API" + cityId);
+        // Deleting Previous City record
         realmManager.deleteRowsForCityWeather(getRealm, cityId);
-        if(cityId != null && cityId.equalsIgnoreCase("currentCity")){
-            realmManager.saveCurrentCityWeatherData(getRealm, response, cityId,this);
-        }else{
-            realmManager.saveWeatherData(getRealm, response, cityId,this);
+
+        // Saving the Updated City weather Data
+        if (cityId != null && cityId.equalsIgnoreCase("currentCity")) {
+            realmManager.saveCurrentCityWeatherData(getRealm, response, cityId, this);
+        } else {
+            realmManager.saveWeatherData(getRealm, response, cityId, this);
         }
     }
 
+
+    /**
+     * Function For tracking the text change in the city search view
+     *
+     * @param phrase
+     * @param start
+     * @param before
+     * @param count
+     */
     public void onTextChanged(CharSequence phrase, int start, int before, int count) {
         ShowLogs.displayLog(phrase.toString());
         if (phrase.toString().length() > 0) {

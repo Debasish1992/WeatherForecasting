@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.weatherforecast.R;
 import com.weatherforecast.databinding.ActivityMainBinding;
 import com.weatherforecast.entity.WeatherModel;
+import com.weatherforecast.interfaces.AlertActionClicked;
+import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.SplashUiCallbacks;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.SplashViewModel;
@@ -22,43 +24,65 @@ import java.util.TimeZone;
 
 import io.realm.Realm;
 
-public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks {
+public class SplashScreen extends AppCompatActivity implements SplashUiCallbacks, ConnectionChecker, AlertActionClicked {
     ActivityMainBinding activityMainBinding;
     SplashViewModel splashViewModel;
     Realm realm;
     SplashUiCallbacks splashUiCallbacks;
-
+    ConnectionChecker connectionChecker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        getSupportActionBar().hide();
         splashUiCallbacks = this;
         initObjects();
     }
 
 
-
+    // Initializing objects
     void initObjects(){
+        connectionChecker = this;
         realm = realm.getDefaultInstance();
-        splashViewModel = new SplashViewModel(SplashScreen.this, realm, splashUiCallbacks);
+        splashViewModel = new SplashViewModel(SplashScreen.this, realm, splashUiCallbacks, connectionChecker);
     }
 
     @Override
     public void onSuccessfullyDataSavedInDb(boolean status) {
-        if(status){
-            Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     @Override
     public void letUserRedirectToHome(boolean status) {
         if(status){
-            SplashScreen.this.finish();
-            startActivity(new Intent(SplashScreen.this, HomeScreen.class));
+            redirectUser();
         }
+    }
+
+    @Override
+    public void isConnected(boolean status) {
+        if(!status)
+            ShowLogs.displayAlertMessageNoInternet(SplashScreen.this,
+                    getResources().getString(R.string.no_internet_message_title),
+                    getResources().getString(R.string.no_internet_message),
+                    this);
+
+    }
+
+    @Override
+    public void onPositiveButtonClicked() {
+        redirectUser();
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+        redirectUser();
+    }
+
+
+    // FUnction redirecting user from Splash screen to home screen
+    void redirectUser(){
+        SplashScreen.this.finish();
+        startActivity(new Intent(SplashScreen.this, HomeScreen.class));
     }
 }

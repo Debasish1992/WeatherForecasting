@@ -21,6 +21,8 @@ import com.weatherforecast.adapters.CityListAdapter;
 import com.weatherforecast.databinding.FragmentHomeBinding;
 import com.weatherforecast.entity.CityModel;
 import com.weatherforecast.entity.WeatherModel;
+import com.weatherforecast.interfaces.AlertActionClicked;
+import com.weatherforecast.interfaces.ConnectionChecker;
 import com.weatherforecast.interfaces.HomeFragmentUiCallback;
 import com.weatherforecast.utils.ShowLogs;
 import com.weatherforecast.viewmodels.HomeViewModel;
@@ -32,7 +34,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 
-public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
+public class HomeFragment extends Fragment implements HomeFragmentUiCallback, ConnectionChecker, AlertActionClicked {
     HomeViewModel homeViewModel;
     FragmentHomeBinding binding;
     Realm realm;
@@ -41,6 +43,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
     List <CityModel> cityModelList;
     List<WeatherModel> getWeatherModel;
     CityListAdapter cityListAdapter;
+    androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -70,7 +73,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
         initViewModel();
         initObjects();
         initViews(binding.getRoot());
-        homeViewModel.initObject(getActivity(), realm, this);
+        homeViewModel.initObject(getActivity(), realm, this, this);
         binding.setHomeViewModel(homeViewModel);
         homeViewModel.getAllCities();
         return binding.getRoot();
@@ -95,7 +98,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
         cityModelList = new ArrayList<>();
         getWeatherModel = new ArrayList<>();
         realm = Realm.getDefaultInstance();
-        cityListAdapter = new CityListAdapter(cityModelList,getWeatherModel,getActivity());
+        cityListAdapter = new CityListAdapter(homeViewModel,cityModelList,getActivity() );
     }
 
     @Override
@@ -109,6 +112,7 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
     }
 
     void initViews(View view){
+        swipeRefreshLayout = view.findViewById(R.id.pullToRefreshCityList);
         rvCityList = view.findViewById(R.id.rvCityList);
         rvCityList.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvCityList.setItemAnimator(new DefaultItemAnimator());
@@ -126,13 +130,33 @@ public class HomeFragment extends Fragment implements HomeFragmentUiCallback {
     }*/
 
     @Override
-    public void onSuccessfulDataFetchedFromLocalDb(List<CityModel> cityList, List<WeatherModel> getWeatherListModel) {
+    public void onSuccessfulDataFetchedFromLocalDb(List<CityModel> cityList) {
+        swipeRefreshLayout.setRefreshing(false);
         ShowLogs.displayLog("CallBack Data " + cityList.toString());
         cityModelList.clear();
         getWeatherModel.clear();
         cityModelList.addAll(cityList);
-        getWeatherModel.addAll(getWeatherListModel);
-       // rvCityList.setAdapter(cityListAdapter);
         cityListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void isConnected(boolean status) {
+        if(!status){
+            swipeRefreshLayout.setRefreshing(false);
+            ShowLogs.displayAlertMessageNoInternet(getActivity(),
+                    getResources().getString(R.string.no_internet_message_title),
+                    getResources().getString(R.string.no_internet_message),
+                    this);
+        }
+    }
+
+    @Override
+    public void onPositiveButtonClicked() {
+
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+
     }
 }

@@ -31,9 +31,10 @@ public class NetworkCalls {
 
 
     /**
-     * Function responsible for fetching the weather data from cloud
+     * Function responsible for fetching the weather data from cloud for 20 cities
      *
-     * @param cityIds
+     * @param cityIds          ids of 20 cities
+     * @param callbackWithData callback to inform the Activity
      */
     public void fetchCitiesWeatherForecastData(String cityIds, CitiAccessCallbacks callbackWithData) {
         ShowLogs.displayLog("Api Called");
@@ -62,13 +63,22 @@ public class NetworkCalls {
         requestQueue.add(jsonObjectRequest);
     }
 
+
+    /**
+     * Function responsible for fetching weather details from cloud using Lat and Lng
+     *
+     * @param lat       Latitude
+     * @param lng       longitude
+     * @param cityId    city Id
+     * @param callbacks CallBack
+     */
     public void fetchDataForACity(int lat, int lng, String cityId, WeatherCallbacks callbacks) {
         String apiUrl = null;
         try {
             apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
                     "lat=" + lat + "&lon=" + lng + "&" +
                     context.getResources().getString(R.string.group_api_key_txt) +
-                    context.getResources().getString(R.string.api_key) +"&"+context.getResources().getString(R.string.temp_unit);
+                    context.getResources().getString(R.string.api_key) + "&" + context.getResources().getString(R.string.temp_unit);
             ShowLogs.displayLog(apiUrl);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiUrl, null,
@@ -88,13 +98,20 @@ public class NetworkCalls {
         }
     }
 
+
+    /**
+     * Function responsible for getting weather details through CityId
+     *
+     * @param cityId City Is
+     * @param callbacks CallBack
+     */
     public void fetchDataForACityThroughId(String cityId, WeatherCallbacks callbacks) {
         String apiUrl = null;
         try {
             apiUrl = context.getResources().getString(R.string.api_end_point_city_specific) +
                     "id=" + cityId + "&" +
                     context.getResources().getString(R.string.group_api_key_txt) +
-                    context.getResources().getString(R.string.api_key)+"&"+context.getResources().getString(R.string.temp_unit);
+                    context.getResources().getString(R.string.api_key) + "&" + context.getResources().getString(R.string.temp_unit);
             ShowLogs.displayLog(apiUrl);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiUrl, null,

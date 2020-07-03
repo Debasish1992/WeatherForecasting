@@ -99,7 +99,6 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Toast.makeText(getActivity(), "Inside weather report", Toast.LENGTH_LONG).show();
     }
 
     public static WeatherFragment newInstance() {
@@ -349,13 +348,12 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
             ShowLogs.displayLog("Weather Forecast data" + getWeatherData.toString());
             realm.beginTransaction();
             List<WeatherModel> cityModelArrays = realm.copyFromRealm(getWeatherData);
+            realm.commitTransaction();
             rvForecastData.setVisibility(View.VISIBLE);
             tvShowingresult.setVisibility(View.VISIBLE);
             if(cityId != null && cityId.equalsIgnoreCase("currentCity")){
-                tvShowingresult.setVisibility(View.VISIBLE);
                 tvShowingresult.setText("Showing result for your Current City");
             }
-            realm.commitTransaction();
             etSearchView.setText(null);
             cityModelList.clear();
             cityModelList.addAll(cityModelArrays);
@@ -376,7 +374,6 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
 
     @Override
     public void getWeatherDetailsCount(int count, String cityId) {
-       /* if (count == 1 || count == 0) {*/
             if(cityId != null && cityId.equalsIgnoreCase("currentCity")){
                 weatherViewModel.getDataWeatherDataFromLocal(cityId);
                 weatherViewModel.callForecastFunction(currentCityLatitude, currentCityLongitude, "");
@@ -384,9 +381,6 @@ public class WeatherFragment extends Fragment implements AlertActionClicked, Wea
                 weatherViewModel.getDataWeatherDataFromLocal(cityId);
                 weatherViewModel.getWeatherDataForFiveDays(cityId);
             }
-        /*} else {
-            weatherViewModel.getDataWeatherDataFromLocal(cityId);
-        }*/
     }
 
     public static void hideOnScreenKeyboardForEditText(Activity activity, EditText editText) {

@@ -2,10 +2,10 @@ package com.weatherforecast.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.icu.text.SimpleDateFormat;
+
 import android.icu.text.TimeZoneFormat;
 import android.os.Build;
-import android.text.format.DateFormat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +25,13 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -60,7 +67,7 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
     }
 
     @SuppressLint("NewApi")
-    public  String getDateCurrentTimeZone(long timeStamp) {
+    public static String getDateCurrentTimeZone(long timeStamp) {
         try{
             Calendar calendar = Calendar.getInstance();
             TimeZone tz = TimeZone.getDefault();
@@ -74,6 +81,7 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
         }
         return "";
     }
+
 
     @Override
     public int getItemCount() {

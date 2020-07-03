@@ -18,6 +18,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -31,6 +35,7 @@ public class HomeScreen extends AppCompatActivity implements NavigationView.OnNa
     private DrawerLayout drawerLayout;
     ActionBarDrawerToggle toggle;
     private final int REQUEST_LOCATION_DIALOG = 999;
+    private AppBarConfiguration mAppBarConfiguration;
 
     @Override
     public void onBackPressed() {
@@ -48,43 +53,21 @@ public class HomeScreen extends AppCompatActivity implements NavigationView.OnNa
         setContentView(R.layout.activity_city_listing_screen);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        drawerLayout = findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        /*mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_exit)
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_top_cities, R.id.nav_weather, R.id.nav_exit)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);*/
-        replaceFragment(WeatherFragment.newInstance(), "Home");
+        NavigationUI.setupWithNavController(navigationView, navController);
     }
 
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        toggle.syncState();
-    }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        toggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(toggle.onOptionsItemSelected(item))
-            return true;
-        return super.onOptionsItemSelected(item);
-    }
 
     void replaceFragment(Fragment fragment, String fragmentTag){
         FragmentManager manager = getSupportFragmentManager();
@@ -133,8 +116,7 @@ public class HomeScreen extends AppCompatActivity implements NavigationView.OnNa
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d("TAGGG", "GPS onRequestPermissionsResult: ");
-        Fragment fragment = getSupportFragmentManager()
-                .findFragmentById(R.id.drawer_layout);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.drawer_layout);
         if (fragment != null && fragment instanceof WeatherFragment){
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
